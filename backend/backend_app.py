@@ -3,8 +3,22 @@ import logging
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+from flask_swagger_ui import get_swaggerui_blueprint
+
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
+
+SWAGGER_URL = "/api/docs"  # Swagger endpoint, e.g. http://localhost:5002/api/docs
+API_URL = "/static/masterblog.json"  # Served from backend/static/
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': 'Masterblog API'
+    }
+)
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')

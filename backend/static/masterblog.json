@@ -1,0 +1,164 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Masterblog API",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:5002" }],
+  "tags": [{ "name": "Post", "description": "Post API - CRUD" }],
+  "paths": {
+    "/api/posts": {
+      "get": {
+        "summary": "Returns all posts",
+        "produces": ["application/json"],
+        "tags": ["Post"],
+        "parameters": [
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Field to sort by",
+            "required": false,
+            "type": "string",
+            "enum": ["title", "content"]
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "description": "Sort direction (default: asc)",
+            "required": false,
+            "type": "string",
+            "enum": ["asc", "desc"]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Post" } }
+          },
+          "400": { "description": "Invalid sort field or direction" }
+        }
+      },
+      "post": {
+        "summary": "Adds a new post",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Post"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/NewPost" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Post created",
+            "schema": { "$ref": "#/definitions/Post" }
+          },
+          "400": { "description": "Missing fields" }
+        }
+      }
+    },
+    "/api/posts/search": {
+      "get": {
+        "summary": "Searches posts by title or content",
+        "produces": ["application/json"],
+        "tags": ["Post"],
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Search term for the title",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "description": "Search term for the content",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching posts (empty list if none match)",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Post" } }
+          }
+        }
+      }
+    },
+    "/api/posts/{id}": {
+      "put": {
+        "summary": "Updates an existing post",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Post"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/UpdatePost" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post updated",
+            "schema": { "$ref": "#/definitions/Post" }
+          },
+          "404": { "description": "Post not found" }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a post",
+        "produces": ["application/json"],
+        "tags": ["Post"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Post deleted" },
+          "404": { "description": "Post not found" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Post": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "title": { "type": "string" },
+        "content": { "type": "string" }
+      }
+    },
+    "NewPost": {
+      "type": "object",
+      "required": ["title", "content"],
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" }
+      }
+    },
+    "UpdatePost": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" }
+      }
+    }
+  }
+}
