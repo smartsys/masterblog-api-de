@@ -48,6 +48,25 @@ def get_posts():
         return jsonify(POSTS)
 
 
+@app.route('/api/posts/search', methods=['GET'])
+def get_posts_search():
+    title = request.args.get('title', default='', type=str).strip().lower()
+    content = request.args.get('content', default='', type=str).strip().lower()
+
+    results = []
+
+    for post in POSTS:
+        if title:
+            if title in post.get('title').lower():
+                results.append(post)
+        if content:
+            if content in post.get('content').lower():
+                if post not in results:
+                    results.append(post)
+
+    return jsonify(results)
+
+
 @app.route('/api/posts/<int:id>', methods=['DELETE'])
 def delete_post(id):
     # Find the post with the given ID
