@@ -63,6 +63,23 @@ def delete_post(id):
     return jsonify({"message": f"Post with id {id} has been deleted successfully."}), 200
 
 
+@app.route('/api/posts/<int:id>', methods=['PUT'])
+def update_post(id):
+    # Find the post with the given ID
+    post = next((post for post in POSTS if post['id'] == id), None)
+    if post is None:
+        app.logger.warning(f'Post with id {id} not found')
+        return jsonify({"error": f"Post with id {id} not found."}), 404
+
+    # Update only the fields provided by the client
+    new_data = request.get_json()
+    post['title'] = new_data.get('title', post['title'])
+    post['content'] = new_data.get('content', post['content'])
+    app.logger.info(f'Post with id {id} updated')
+
+    return jsonify(post), 200
+
+
 @app.errorhandler(429)
 def rate_limit_error(error):
     app.logger.warning(f'Rate limit exceeded for {request.path}')
