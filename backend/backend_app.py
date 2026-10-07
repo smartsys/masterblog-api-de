@@ -43,7 +43,7 @@ def get_posts():
     if request.method == 'POST':
 
         # Get the new post data from the client
-        new_post = request.get_json()
+        new_post = request.get_json(silent=True) or {}
         missing_fields = validate_post_data(new_post)
         if missing_fields:
             return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
